@@ -32,7 +32,7 @@ class BaseClass(object):
         return self.get_file_data(self.EMAIL_LOG)
         
     def debug(self, value):
-        print '[DEBUG] %s' % value
+        print('[DEBUG] %s' % value)
         
     def get_file_data(self, full_file_name):
         if not os.path.isdir(os.path.dirname(full_file_name)):

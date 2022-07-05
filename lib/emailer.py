@@ -1,5 +1,5 @@
 import smtplib
-import ConfigParser
+import configparser
 import os
 import base_class
 

@@ -1,5 +1,5 @@
 import os
-import ConfigParser
+import configparser
 import base_class
 from lib.twitter_actions import TwitterActions
 
@@ -34,6 +34,6 @@ class FilterTweets(base_class.BaseClass):
         return OR_condition_met
     
     def _get_property(self, property_file, property_section, property_key):
-        property = ConfigParser.RawConfigParser()
+        property = configparser.RawConfigParser()
         property.read(property_file)
         return property.get(property_section, property_key)        
