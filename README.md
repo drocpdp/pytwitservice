@@ -1,16 +1,17 @@
 # pytwitservice
 
-### Use Case:
-Original Use Case was for a Twitter Handle that announced all food trucks in the vicinity.
-Food Trucks would ensure they mention the Twitter Handle and also relevant street intersections.
-Users that follow the Twitter Handle would be informed daily of the trucks that would appear as well as their location.
+### Use Case: Food Trucks.
+  #### "Which Food Trucks will be here today?"
+* Original Use Case was for a Twitter Handle that announced all food trucks in the vicinity.
+* Food Trucks (Businesses) would Tweet, ensure they mention (@name) the Twitter Handle and also relevant street intersections.
+* pytwitservice automatically RETWEETS such tweets.
+* Users that follow the Twitter Handle would be informed daily of the trucks that would appear as well as their location.
+* More detail and history at https://olympicfoodtrucks.wordpress.com/
 
-### pytwitservice Automatically Reads and Retweets Certain Tweets Throughout the day.
-PyTwitService was a pretty simple idea. 
-1. Business sends a Tweet, MENTIONING (@twitter_handle) Twitter Handle
-2. PyTwitService scans all tweets that mention Twitter Handle.
-3. PyTwitService performs additional logic to determine if tweet is relevant.
-4. If the Tweet is relevant, PyTwitService retweets the tweet
-5. Users see the Retweeted Tweet and are alerted of that Food Truck that day.
+### More Generic Use Cases:
+* Keep up to date on Weather, news, stocks, traffic, Famous Court Cases... 
+* Follow your favorite Twitter handles and be notified when their tweets contain certain things/labels/names etc.
 
 # Setup:
+
+TBD
