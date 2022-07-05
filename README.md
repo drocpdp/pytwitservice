@@ -13,5 +13,6 @@
 * Follow your favorite Twitter handles and be notified when their tweets contain certain things/labels/names etc.
 
 # Setup:
+* (Note, this will be updated to be more concise)
+* <img width="177" alt="image" src="https://user-images.githubusercontent.com/3992143/177412026-3643e847-e1d4-4e05-8fa9-5d71ea20e450.png">
 
-TBD
