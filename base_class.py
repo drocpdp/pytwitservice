@@ -1,7 +1,8 @@
+from twitter import *
 import datetime
 import os
 
-class BaseClass(object):
+class BaseClass():
     
     def __init__(self):
         self.time_stamp = datetime.datetime.now().strftime('%Y_%m_%d-%H_%M_%S')

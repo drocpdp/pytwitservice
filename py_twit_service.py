@@ -2,7 +2,8 @@
 #old tweet id == 344501804517711874
 
 import base_class
-import twitter
+from twitter import *
+from twitter import OAuth
 import traceback
 from lib.account_access import AccountAccess
 from lib.filter_tweets import FilterTweets
@@ -19,7 +20,7 @@ class PyTwitService(base_class.BaseClass):
         filter = FilterTweets()
         twitter_actions = TwitterActions()
         login_dict = acct.get_login_matrix()
-        api = twitter.Api(**login_dict)
+        api = Twitter(OAuth(**login_dict))
         
         #Get last processed tweet from serialized location
         last_tweet_full_file_name = acct.get_last_tweet_id_location()

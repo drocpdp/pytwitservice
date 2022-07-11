@@ -75,13 +75,13 @@ class AccountAccess(base_class.BaseClass):
 
     def get_login_matrix(self, account='default'):
         matrix = {}
+        matrix['token'] = self.get_access_token_key(account)
+        matrix['token_secret'] = self.get_access_token_secret(account)        
         matrix['consumer_key'] = self.get_consumer_key(account)
         matrix['consumer_secret'] = self.get_consumer_secret(account)
-        matrix['access_token_key'] = self.get_access_token_key(account)
-        matrix['access_token_secret'] = self.get_access_token_secret(account)
         return matrix
     
     def _get_property(self, property_file, property_section, property_key):
-        property = ConfigParser.RawConfigParser()
+        property = configparser.RawConfigParser()
         property.read(property_file)
         return property.get(property_section, property_key)    
