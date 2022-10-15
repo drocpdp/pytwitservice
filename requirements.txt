@@ -1,0 +1,17 @@
+cachetools
+certifi
+charset-normalizer
+cssselect
+cssutils
+httplib2
+idna
+lxml
+oauth2
+oauthlib
+premailer
+pyparsing
+requests
+requests-oauthlib
+tweepy==4.10.1
+urllib3
+yagmail

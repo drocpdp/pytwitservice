@@ -1,7 +1,8 @@
+from twitter import *
 import datetime
 import os
 
-class BaseClass(object):
+class BaseClass():
     
     def __init__(self):
         self.time_stamp = datetime.datetime.now().strftime('%Y_%m_%d-%H_%M_%S')
@@ -10,20 +11,20 @@ class BaseClass(object):
         self.EMAIL_LOG = os.path.dirname(os.path.realpath(__file__)) + '/logs/%s_email_log.log' % self.time_stamp
         
     def sys_log(self, value):
-        value = value.encode('ascii', 'ignore').rstrip().replace('\n', '')
+        #value = value.encode('ascii', 'ignore').rstrip().replace('\n', '')
         entry = 'SYSTEM LOG :: [%s] -- %s\n' % (datetime.datetime.now(), value)
         file_obj = self.write_to_file(self.SYSTEM_LOG, entry)
         self.debug('wrote to system log')
         
     def log(self, value):
-        value = value.encode('ascii', 'ignore').rstrip().replace('\n','')
+        #value = value.encode('ascii', 'ignore').rstrip().replace('\n','')
         entry = 'LOG :: [%s] -- %s\n' % (datetime.datetime.now(), value)
         self.write_to_file(self.LOG_FILE, entry)
         self.sys_log(value)
         self.debug('wrote to user log')
         
     def email_log(self, value):
-        value = value.encode('ascii', 'ignore').rstrip().replace('\n','')
+        #value = value.encode('ascii', 'ignore').rstrip().replace('\n','')
         entry = 'LOG :: [%s] -- %s\n' % (datetime.datetime.now(), value)
         self.write_to_file(self.EMAIL_LOG, entry)        
         self.log(value)
@@ -32,7 +33,7 @@ class BaseClass(object):
         return self.get_file_data(self.EMAIL_LOG)
         
     def debug(self, value):
-        print '[DEBUG] %s' % value
+        print('[DEBUG] %s' % value)
         
     def get_file_data(self, full_file_name):
         if not os.path.isdir(os.path.dirname(full_file_name)):

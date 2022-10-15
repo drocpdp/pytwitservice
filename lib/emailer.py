@@ -1,55 +1,42 @@
-import smtplib
-import ConfigParser
+# using yagmail for access to GMail
 import os
-import base_class
+import base64
+import datetime
+import sys
 
-class Emailer(base_class.BaseClass):
+import yagmail
+
+class Emailer(object):
     
-    PROPERTIES_FILE = os.path.dirname(os.path.realpath(__file__)) + '/../config/pytwitservice.properties'
-    
-    email_config_file = None
-    
-    
-    def email(self, msg='', **kwargs):
-        if msg.strip() != '':
-            self.email_config_file = self.get_property(self.PROPERTIES_FILE, 'default', 'email_config_file')
-            self.debug('self.email_config_file = %s' % self.email_config_file)
-            
-            fromaddr = self.get_property(self.email_config_file, 'default', 'from')
-            
-            if kwargs and kwargs['role'] == 'admin':
-                toaddrs = self.get_property(self.email_config_file, 'default', 'to_admin').split(',')
-                subject = 'Admin Alert from PyTwitService - %s' % (kwargs['admin_subject'])
-            else:
-                toaddrs = self.get_property(self.email_config_file, 'default', 'to').split(',')
-                subject = 'Requested Automated Alert from PyTwitService'
-            
-            
-            msg = 'Subject:%s\n\n%s' % (subject, msg)
-            
-            password = self.get_property(self.email_config_file, 'default', 'password')
-            self.debug('password = [%s]' % password)
-            
-    
-            # Credentials (if needed)
-            username = fromaddr
-            self.debug('username = %s' % username)
-            
-            # The actual mail send
-            server = smtplib.SMTP('smtp.gmail.com:587')
-            server.ehlo()
-            server.starttls()
-            server.ehlo()
-            server.login(username,password)
-            server.sendmail(fromaddr, toaddrs, msg)
-            server.quit()
-        
-    def admin_email(self, msg, subject):
-       self.email(msg, role='admin', admin_subject=subject) 
-        
-    def get_property(self, property_file, property_section, property_key):
-        self.debug('-----')
-        self.debug(property_file)
-        property = ConfigParser.RawConfigParser()
-        self.debug(property.read(property_file))
-        return property.get(property_section, property_key)
+    PROJECT_NAME = os.environ["PROJECT_NAME"];
+
+    def __init__(self):
+        return
+
+    def from_email(self):
+        return RunConfigs()._email_report_from_address;
+
+    def today_date(self):
+        date_s = str(datetime.datetime.now())
+        return date_s
+
+    def send_email(self, msg=None):
+        try:
+            email_pw = os.environ.get('EMAILER_GMAIL_PASSWORD')
+        except Exception as e:
+            print(e.message)        
+
+        yag = yagmail.SMTP('pyautonotification@gmail.com', email_pw)
+        contents = [msg]
+        subject = "ALERT: " + self.today_date()
+        yag.send('davidreynon@gmail.com', subject , contents)
+
+
+    def main(self):
+        print('in emailer.py main()')
+        self.send_email()
+
+
+
+if __name__=="__main__":
+    Emailer().main()
