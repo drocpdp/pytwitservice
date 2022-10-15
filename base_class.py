@@ -11,20 +11,20 @@ class BaseClass():
         self.EMAIL_LOG = os.path.dirname(os.path.realpath(__file__)) + '/logs/%s_email_log.log' % self.time_stamp
         
     def sys_log(self, value):
-        value = value.encode('ascii', 'ignore').rstrip().replace('\n', '')
+        #value = value.encode('ascii', 'ignore').rstrip().replace('\n', '')
         entry = 'SYSTEM LOG :: [%s] -- %s\n' % (datetime.datetime.now(), value)
         file_obj = self.write_to_file(self.SYSTEM_LOG, entry)
         self.debug('wrote to system log')
         
     def log(self, value):
-        value = value.encode('ascii', 'ignore').rstrip().replace('\n','')
+        #value = value.encode('ascii', 'ignore').rstrip().replace('\n','')
         entry = 'LOG :: [%s] -- %s\n' % (datetime.datetime.now(), value)
         self.write_to_file(self.LOG_FILE, entry)
         self.sys_log(value)
         self.debug('wrote to user log')
         
     def email_log(self, value):
-        value = value.encode('ascii', 'ignore').rstrip().replace('\n','')
+        #value = value.encode('ascii', 'ignore').rstrip().replace('\n','')
         entry = 'LOG :: [%s] -- %s\n' % (datetime.datetime.now(), value)
         self.write_to_file(self.EMAIL_LOG, entry)        
         self.log(value)

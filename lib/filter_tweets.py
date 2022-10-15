@@ -5,7 +5,7 @@ from lib.twitter_actions import TwitterActions
 
 class FilterTweets(base_class.BaseClass):
     
-    PROPERTIES_FILE = os.path.dirname(os.path.realpath(__file__)) + '/../config/locations.properties'
+    PROPERTIES_FILE= os.environ['PYTWITTER']+ '/config/locations.properties'
     filters = []
     twit = TwitterActions()
     
