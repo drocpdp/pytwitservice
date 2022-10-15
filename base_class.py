@@ -7,7 +7,8 @@ class BaseClass():
         self.time_stamp = datetime.datetime.now().strftime('%Y_%m_%d-%H_%M_%S')
         self.SYSTEM_LOG = os.environ['PYTWITSERVICE_LOGS'] + '/%s_system.log' % self.time_stamp
         self.LOG_FILE = os.environ['PYTWITSERVICE_LOGS'] + '/%s_log.log' % self.time_stamp
-        self.EMAIL_LOG = os.environ['PYTWITSERVICE_LOGS'] + '/%s_email_log.log' % self.time_stamp
+        #self.EMAIL_LOG = os.environ['PYTWITSERVICE_LOGS'] + '/%s_email_log.log' % self.time_stamp
+        self.EMAIL_LOG = os.environ['PYTWITSERVICE_LOGS'] + '/email_log.log'
         
     def sys_log(self, value):
         entry = 'SYSTEM LOG :: [%s] -- %s\n' % (datetime.datetime.now(), value)
@@ -27,6 +28,9 @@ class BaseClass():
         
     def get_email_log(self):
         return self.get_file_data(self.EMAIL_LOG)
+
+    def remove_email_log(self):
+        os.remove(self.EMAIL_LOG)
         
     def debug(self, value):
         print('[DEBUG] %s' % value)

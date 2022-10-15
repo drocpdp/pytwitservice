@@ -12,7 +12,6 @@ class TwitterActions(base_class.BaseClass):
             tb = traceback.format_exc() 
             self.debug('Exception. See logs')
             self.sys_log(tb)
-            self.email_log('Exception -- %s' % e)
             return False
         
     def get_tweet_id(self, tweet_object):

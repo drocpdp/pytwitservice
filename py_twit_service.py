@@ -67,25 +67,43 @@ class PyTwitService(base_class.BaseClass):
                     initial = False
                 
                 summary = twitter_actions.get_summary_tweet_data(tweet)
+                retweet = False
+                retweet_succ = False
+                filtered = False
 
-                # filter for retweet
                 if filter.is_tweet_meet_rt_requirements(tweet):
                     self.log('Tweet Filtered -- %s' % summary)
                     self.log('Attempting RT -- %s' % summary)
+                    retweet = True
 
-                    if twitter_actions.retweet(api, tweet):    
-                        self.email_log('RT SUCCESSFUL!! -- %s' % summary)
-                    else:
-                        self.email_log('RT FAIL!! see logs -- %s' % summary)                
-                else:
-                    self.log('NO RT -- %s' % summary)
-
-                # filter for simple alert
                 if filter.is_tweet_meet_alert_requirements(tweet):
                     self.log('Tweet Filtered -- %s' % summary)
-                    self.email_log('FILTERED -- %s' % summary)
+                    filtered = True
+
+                if retweet:
+                    rt_result = twitter_actions.retweet(api, tweet)
+                    if rt_result:
+                        retweet_succ = True
+                        self.log('Retweet SUCCESS -- %s' % summary)
+                    else:
+                        self.log('RT FAIL -- %s' % summary)
+
+                if retweet or filtered:
+                    if retweet:
+                        if retweet_succ:
+                            self.email_log('LOG:: RETWEETED! - {}'.format(summary))
+                        else:
+                            self.email_log('LOG:: RETWEETED FAILED - {}'.format(summary))    
+                    if filtered:
+                        self.email_log('LOG:: FILTERED - {}'.format(summary))
                 else:
-                    self.log('NO SIMPLE ALERT -- %s' % summary)
+                    self.log('NO RT NOR FILTER -- %s' % summary)
+
+            #record last tweet ID
+            file_obj = open(last_tweet_full_file_name, 'w')
+            file_obj.write(str(since_id))
+            file_obj.close()                    
+                 
                     
         except Exception as e:
             tb = traceback.format_exc() 
@@ -93,15 +111,12 @@ class PyTwitService(base_class.BaseClass):
             self.sys_log(tb)
             self.email_log('Exception -- %s' % e)
             return False              
-        
-        #record last tweet ID
-        file_obj = open(last_tweet_full_file_name, 'w')
-        file_obj.write(str(since_id))
-        file_obj.close()
+
         
         email_log = AccountAccess().get_email_log()
         if email_log:
             Emailer().send_email(email_log)
+            self.remove_email_log()
 
 if __name__=='__main__':
     PyTwitService().main()
