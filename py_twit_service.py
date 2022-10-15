@@ -10,23 +10,23 @@ from lib.twitter_actions import TwitterActions
 from lib.emailer import Emailer
 import tweepy
 
+class NoRecentTwitterId(Exception):
+    pass
+
 class PyTwitService(base_class.BaseClass):
     
-    def main(self): 
-
+    def get_api(self):
         try:
-            acct = AccountAccess()
-            api_key = acct.get_api_key()
-            api_secret = acct.get_api_key_secret()
-            access_token = acct.get_access_token()
-            access_token_secret = acct.get_access_token_secret()
-            bearer_token = acct.get_bearer_token()
-            oauth_2_0_client_id = acct.get_oauth_2_0_client_id()
-            oauth_2_0_client_secret = acct.get_oauth_2_0_client_secret()
+            api_key = AccountAccess().get_api_key()
+            api_secret = AccountAccess().get_api_key_secret()
+            access_token = AccountAccess().get_access_token()
+            access_token_secret = AccountAccess().get_access_token_secret()
+            bearer_token = AccountAccess().get_bearer_token()
+            oauth_2_0_client_id = AccountAccess().get_oauth_2_0_client_id()
+            oauth_2_0_client_secret = AccountAccess().get_oauth_2_0_client_secret()
         except Exception as e:
             self.log('ERROR: Trouble accessing account info')
             self.log(e)
-
 
         try:
             auth = tweepy.OAuth1UserHandler(
@@ -34,69 +34,83 @@ class PyTwitService(base_class.BaseClass):
             api = tweepy.API(auth)
         except Exception as e:
             self.log('ERROR: Trouble with Authorization')
-            self.log(e)
+            self.log(e)        
+        return api
+
+    def main(self): 
+        api = self.get_api()
 
         filter = FilterTweets()
         twitter_actions = TwitterActions()
         
-        #Get last processed tweet from serialized location
-        last_tweet_full_file_name = acct.get_last_tweet_id_location()
+        acc_acc = AccountAccess()
 
-        if not os.path.isdir(os.path.dirname(last_tweet_full_file_name)):
-            os.makedirs(os.path.dirname(last_tweet_full_file_name))
-        if not os.path.isfile(last_tweet_full_file_name):
-            last_processed_twitter_id = None
-        else:
-            twit_id_file = open(acct.get_last_tweet_id_location(), 'r')
-            last_processed_twitter_id = twit_id_file.read().strip()
-            twit_id_file.close()
-        
         initial = True
         
-        since_id = last_processed_twitter_id
-        
-        temp_count = 0
-        
+        since_id = acc_acc.get_last_tweet_id()
+
+        if not since_id:
+            raise NoRecentTwitterId("No Recent Twitter ID. Check File")
+
         #rate limit exceptions should be caught here
         try:
-            
             for tweet in api.home_timeline(count=200, since_id=since_id):
-                temp_count += 1
                 tweet_id = int(tweet.id)
                 #latest tweet should be saved as latest
                 if initial:
                     since_id = tweet_id
                     initial = False
-                #filter tweets
+                
                 summary = twitter_actions.get_summary_tweet_data(tweet)
-                if filter.is_tweet_meet_requirements(tweet):
+                retweet = False
+                retweet_succ = False
+                filtered = False
+
+                if filter.is_tweet_meet_rt_requirements(tweet):
                     self.log('Tweet Filtered -- %s' % summary)
                     self.log('Attempting RT -- %s' % summary)
+                    retweet = True
 
-                    """ to add another if... retweet + just email """
+                if filter.is_tweet_meet_alert_requirements(tweet):
+                    self.log('Tweet Filtered -- %s' % summary)
+                    filtered = True
 
-                    if twitter_actions.retweet(api, tweet):    
-                        self.email_log('RT SUCCESSFUL!! -- %s' % summary)
+                if retweet:
+                    rt_result = twitter_actions.retweet(api, tweet)
+                    if rt_result:
+                        retweet_succ = True
+                        self.log('Retweet SUCCESS -- %s' % summary)
                     else:
-                        self.email_log('RT FAIL!! see logs -- %s' % summary)                
+                        self.log('RT FAIL -- %s' % summary)
+
+                if retweet or filtered:
+                    if retweet:
+                        if retweet_succ:
+                            self.email_log('LOG:: RETWEETED! - {}'.format(summary))
+                        else:
+                            self.email_log('LOG:: RETWEETED FAILED - {}'.format(summary))    
+                    if filtered:
+                        self.email_log('LOG:: FILTERED - {}'.format(summary))
                 else:
-                    self.log('NO RT -- %s' % summary)
+                    self.log('NO RT NOR FILTER -- %s' % summary)
+
+                #record last tweet ID
+                acc_acc.write_last_tweet_id(str(since_id))     
+                 
                     
         except Exception as e:
-            tb = traceback.format_exc() 
+            tb = traceback.format_exc(e) 
             self.debug('Exception. See logs')
             self.sys_log(tb)
+            self.log(e)
+            self.log(tb)
             self.email_log('Exception -- %s' % e)
-            return False              
-        
-        #record last tweet ID
-        file_obj = open(last_tweet_full_file_name, 'w')
-        file_obj.write(str(since_id))
-        file_obj.close()
-        
-        email_log = acct.get_email_log()
-        if email_log:
-            Emailer().send_email(email_log)
+
+        finally:
+            email_log = AccountAccess().get_email_log()
+            if email_log:
+                Emailer().send_email(email_log)
+                self.remove_email_log()
 
 if __name__=='__main__':
     PyTwitService().main()

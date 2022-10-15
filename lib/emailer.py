@@ -3,18 +3,12 @@ import os
 import base64
 import datetime
 import sys
-
 import yagmail
 
 class Emailer(object):
-    
-    PROJECT_NAME = os.environ["PROJECT_NAME"];
 
     def __init__(self):
         return
-
-    def from_email(self):
-        return RunConfigs()._email_report_from_address;
 
     def today_date(self):
         date_s = str(datetime.datetime.now())
