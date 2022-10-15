@@ -10,6 +10,9 @@ from lib.twitter_actions import TwitterActions
 from lib.emailer import Emailer
 import tweepy
 
+class NoRecentTwitterId(Exception):
+    pass
+
 class PyTwitService(base_class.BaseClass):
     
     def get_api(self):
@@ -35,27 +38,19 @@ class PyTwitService(base_class.BaseClass):
         return api
 
     def main(self): 
-
         api = self.get_api()
 
         filter = FilterTweets()
         twitter_actions = TwitterActions()
         
-        #Get last processed tweet from serialized location
-        last_tweet_full_file_name = AccountAccess().get_last_tweet_id_location()
+        acc_acc = AccountAccess()
 
-        if not os.path.isdir(os.path.dirname(last_tweet_full_file_name)):
-            os.makedirs(os.path.dirname(last_tweet_full_file_name))
-        if not os.path.isfile(last_tweet_full_file_name):
-            last_processed_twitter_id = None
-        else:
-            twit_id_file = open(AccountAccess().get_last_tweet_id_location(), 'r')
-            last_processed_twitter_id = twit_id_file.read().strip()
-            twit_id_file.close()
-        
         initial = True
         
-        since_id = last_processed_twitter_id
+        since_id = acc_acc.get_last_tweet_id()
+
+        if not since_id:
+            raise NoRecentTwitterId("No Recent Twitter ID. Check File")
 
         #rate limit exceptions should be caught here
         try:
@@ -99,24 +94,23 @@ class PyTwitService(base_class.BaseClass):
                 else:
                     self.log('NO RT NOR FILTER -- %s' % summary)
 
-            #record last tweet ID
-            file_obj = open(last_tweet_full_file_name, 'w')
-            file_obj.write(str(since_id))
-            file_obj.close()                    
+                #record last tweet ID
+                acc_acc.write_last_tweet_id(str(since_id))     
                  
                     
         except Exception as e:
-            tb = traceback.format_exc() 
+            tb = traceback.format_exc(e) 
             self.debug('Exception. See logs')
             self.sys_log(tb)
+            self.log(e)
+            self.log(tb)
             self.email_log('Exception -- %s' % e)
-            return False              
 
-        
-        email_log = AccountAccess().get_email_log()
-        if email_log:
-            Emailer().send_email(email_log)
-            self.remove_email_log()
+        finally:
+            email_log = AccountAccess().get_email_log()
+            if email_log:
+                Emailer().send_email(email_log)
+                self.remove_email_log()
 
 if __name__=='__main__':
     PyTwitService().main()

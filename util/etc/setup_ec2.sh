@@ -12,6 +12,7 @@ sudo mkdir /opt/services/configs/bookmarks
 sudo mkdir /opt/services/virtualenvs
 sudo mkdir /opt/services/virtualenvs/pytwitservice
 sudo mkdir /opt/services/logs
+sudo mkdir /opt/services/place_holder_logs
 sudo mkdir /opt/services/logs/pytwitter
 
 # set permissions

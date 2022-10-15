@@ -7,7 +7,6 @@ class BaseClass():
         self.time_stamp = datetime.datetime.now().strftime('%Y_%m_%d-%H_%M_%S')
         self.SYSTEM_LOG = os.environ['PYTWITSERVICE_LOGS'] + '/%s_system.log' % self.time_stamp
         self.LOG_FILE = os.environ['PYTWITSERVICE_LOGS'] + '/%s_log.log' % self.time_stamp
-        #self.EMAIL_LOG = os.environ['PYTWITSERVICE_LOGS'] + '/%s_email_log.log' % self.time_stamp
         self.EMAIL_LOG = os.environ['PYTWITSERVICE_LOGS'] + '/email_log.log'
         
     def sys_log(self, value):
@@ -47,7 +46,7 @@ class BaseClass():
             return file_data
         
     def write_to_file_overwrite(self, full_file_name, value):
-        self.write_to_file(full_file_name, value, 'w')
+        self.write_to_file(full_file_name, value, method='w')
         
     def write_to_file(self, full_file_name, value, method='a'):
         #record last tweet ID
