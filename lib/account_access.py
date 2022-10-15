@@ -5,7 +5,7 @@ from configparser import NoSectionError
 
 class AccountAccess(base_class.BaseClass):
     
-    PROPERTIES_FILE= os.environ['PYTWITTER']+ '/config/locations.properties'
+    PROPERTIES_FILE= os.environ['PYTWITSERVICE']+ '/config/locations.properties'
     
     def get_access_token_secret(self):
         return self.get_config_value('access_token_secret')

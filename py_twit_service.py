@@ -27,7 +27,6 @@ class PyTwitService(base_class.BaseClass):
             self.log('ERROR: Trouble accessing account info')
             self.log(e)
 
-
         try:
             auth = tweepy.OAuth1UserHandler(
                 api_key, api_secret, access_token, access_token_secret)
@@ -54,26 +53,22 @@ class PyTwitService(base_class.BaseClass):
         initial = True
         
         since_id = last_processed_twitter_id
-        
-        temp_count = 0
-        
+
         #rate limit exceptions should be caught here
         try:
-            
             for tweet in api.home_timeline(count=200, since_id=since_id):
-                temp_count += 1
                 tweet_id = int(tweet.id)
                 #latest tweet should be saved as latest
                 if initial:
                     since_id = tweet_id
                     initial = False
-                #filter tweets
+                
                 summary = twitter_actions.get_summary_tweet_data(tweet)
-                if filter.is_tweet_meet_requirements(tweet):
+
+                # filter for retweet
+                if filter.is_tweet_meet_rt_requirements(tweet):
                     self.log('Tweet Filtered -- %s' % summary)
                     self.log('Attempting RT -- %s' % summary)
-
-                    """ to add another if... retweet + just email """
 
                     if twitter_actions.retweet(api, tweet):    
                         self.email_log('RT SUCCESSFUL!! -- %s' % summary)
@@ -81,6 +76,13 @@ class PyTwitService(base_class.BaseClass):
                         self.email_log('RT FAIL!! see logs -- %s' % summary)                
                 else:
                     self.log('NO RT -- %s' % summary)
+
+                # filter for simple alert
+                if filter.is_tweet_meet_alert_requirements(tweet):
+                    self.log('Tweet Filtered -- %s' % summary)
+                    self.email_log('FILTERED -- %s' % summary)
+                else:
+                    self.log('NO SIMPLE ALERT -- %s' % summary)
                     
         except Exception as e:
             tb = traceback.format_exc() 

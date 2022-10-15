@@ -1,4 +1,3 @@
-from twitter import *
 import datetime
 import os
 
@@ -6,25 +5,22 @@ class BaseClass():
     
     def __init__(self):
         self.time_stamp = datetime.datetime.now().strftime('%Y_%m_%d-%H_%M_%S')
-        self.SYSTEM_LOG = os.path.dirname(os.path.realpath(__file__)) + '/logs/%s_system.log' % self.time_stamp
-        self.LOG_FILE = os.path.dirname(os.path.realpath(__file__)) + '/logs/%s_log.log' % self.time_stamp
-        self.EMAIL_LOG = os.path.dirname(os.path.realpath(__file__)) + '/logs/%s_email_log.log' % self.time_stamp
+        self.SYSTEM_LOG = os.environ['PYTWITSERVICE_LOGS'] + '/%s_system.log' % self.time_stamp
+        self.LOG_FILE = os.environ['PYTWITSERVICE_LOGS'] + '/%s_log.log' % self.time_stamp
+        self.EMAIL_LOG = os.environ['PYTWITSERVICE_LOGS'] + '/%s_email_log.log' % self.time_stamp
         
     def sys_log(self, value):
-        #value = value.encode('ascii', 'ignore').rstrip().replace('\n', '')
         entry = 'SYSTEM LOG :: [%s] -- %s\n' % (datetime.datetime.now(), value)
         file_obj = self.write_to_file(self.SYSTEM_LOG, entry)
         self.debug('wrote to system log')
         
     def log(self, value):
-        #value = value.encode('ascii', 'ignore').rstrip().replace('\n','')
         entry = 'LOG :: [%s] -- %s\n' % (datetime.datetime.now(), value)
         self.write_to_file(self.LOG_FILE, entry)
         self.sys_log(value)
         self.debug('wrote to user log')
         
     def email_log(self, value):
-        #value = value.encode('ascii', 'ignore').rstrip().replace('\n','')
         entry = 'LOG :: [%s] -- %s\n' % (datetime.datetime.now(), value)
         self.write_to_file(self.EMAIL_LOG, entry)        
         self.log(value)

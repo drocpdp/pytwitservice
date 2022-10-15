@@ -1,5 +1,4 @@
 import base_class
-import twitter
 import traceback
 
 class TwitterActions(base_class.BaseClass):
@@ -9,7 +8,7 @@ class TwitterActions(base_class.BaseClass):
             tweet_id = tweet_object.id
             api.retweet(int(tweet_id))
             return True
-        except twitter.TwitterError as e:
+        except Exception as e:
             tb = traceback.format_exc() 
             self.debug('Exception. See logs')
             self.sys_log(tb)
