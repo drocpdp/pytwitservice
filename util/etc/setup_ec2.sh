@@ -8,7 +8,6 @@ sudo zypper -n update
 sudo mkdir /opt/services
 sudo mkdir /opt/services/configs
 sudo mkdir /opt/services/configs/filters
-sudo mkdir /opt/services/configs/bookmarks
 sudo mkdir /opt/services/virtualenvs
 sudo mkdir /opt/services/virtualenvs/pytwitservice
 sudo mkdir /opt/services/logs
