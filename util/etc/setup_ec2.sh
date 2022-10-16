@@ -7,12 +7,13 @@ sudo zypper -n update
 # create directories
 sudo mkdir /opt/services
 sudo mkdir /opt/services/configs
-sudo mkdir /opt/services/configs/filters
+sudo mkdir /opt/services/configs/pytwitservice
+sudo mkdir /opt/services/configs/pytwitservice/filters
+sudo mkdir /opt/services/configs/pytwitservice/place_holder_logs
 sudo mkdir /opt/services/virtualenvs
 sudo mkdir /opt/services/virtualenvs/pytwitservice
 sudo mkdir /opt/services/logs
-sudo mkdir /opt/services/place_holder_logs
-sudo mkdir /opt/services/logs/pytwitter
+sudo mkdir /opt/services/logs/pytwitservice
 
 # set permissions
 sudo chmod -R 777 /opt/services/
