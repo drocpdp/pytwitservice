@@ -2,6 +2,9 @@ import base_class
 import traceback
 
 class TwitterActions(base_class.BaseClass):
+
+    def __init__(self):
+        self.collector = []
     
     def retweet(self, api, tweet_object):
         try:
@@ -39,3 +42,19 @@ class TwitterActions(base_class.BaseClass):
             self.get_tweet_Created_At(tweet_object), 
             self.get_tweet_text(tweet_object, False))
         return summary
+
+    def write_to_summary_tweet_data_object(self, tweet_object):
+        tweet_json = {
+            "id": self.get_tweet_id(tweet_object),
+            "user": self.get_tweet_User_Name(tweet_object),
+            "created": str(self.get_tweet_Created_At(tweet_object)),
+            "content": self.get_tweet_text(tweet_object, False)
+        }
+        self.collector.append(tweet_json)
+
+    def get_summary_tweet_data_object(self):
+        return self.collector
+
+    def is_json_log(self):
+        return True if self.collector else False
+
