@@ -9,6 +9,7 @@ from lib.filter_tweets import FilterTweets
 from lib.twitter_actions import TwitterActions
 from lib.emailer import Emailer
 import tweepy
+import json
 
 class NoRecentTwitterId(Exception):
     pass
@@ -62,17 +63,34 @@ class PyTwitService(base_class.BaseClass):
                     initial = False
                 
                 summary = twitter_actions.get_summary_tweet_data(tweet)
+                
                 retweet = False
                 retweet_succ = False
                 filtered = False
 
+                # RT and Alert requirements are MUTUALLY EXCLUSIVE at the logical level.
+                # For now, a RT and Alert requires, at the config level to place on both
+                #   config files.
+
+                # Two types of logging:
+                # 1. previous logging appends to one file each tweet
+                # 2. logging json will append one time at end of try loop to maintain structure
+
                 if filter.is_tweet_meet_rt_requirements(tweet):
                     self.log('Tweet Filtered -- %s' % summary)
                     self.log('Attempting RT -- %s' % summary)
+                    
+                    # get json object of tweet data
+                    twitter_actions.write_to_summary_tweet_data_object(tweet)
+
                     retweet = True
 
                 if filter.is_tweet_meet_alert_requirements(tweet):
                     self.log('Tweet Filtered -- %s' % summary)
+
+                    # get json object of tweet data
+                    twitter_actions.write_to_summary_tweet_data_object(tweet)
+
                     filtered = True
 
                 if retweet:
@@ -111,6 +129,8 @@ class PyTwitService(base_class.BaseClass):
             if email_log:
                 Emailer().send_email(email_log)
                 self.remove_email_log()
+            if twitter_actions.is_json_log():
+                self.log_json(twitter_actions.get_summary_tweet_data_object())
 
 if __name__=='__main__':
     PyTwitService().main()

@@ -1,5 +1,6 @@
 import datetime
 import os
+import json
 
 class BaseClass():
     
@@ -7,6 +8,7 @@ class BaseClass():
         self.time_stamp = datetime.datetime.now().strftime('%Y_%m_%d-%H_%M_%S')
         self.SYSTEM_LOG = os.environ['PYTWITSERVICE_LOGS'] + '/%s_system.log' % self.time_stamp
         self.LOG_FILE = os.environ['PYTWITSERVICE_LOGS'] + '/%s_log.log' % self.time_stamp
+        self.LOG_JSON_FILE = os.environ['PYTWITSERVICE_LOGS'] + '/%s_log.json' % self.time_stamp
         self.EMAIL_LOG = os.environ['PYTWITSERVICE_LOGS'] + '/email_log.log'
         
     def sys_log(self, value):
@@ -19,6 +21,11 @@ class BaseClass():
         self.write_to_file(self.LOG_FILE, entry)
         self.sys_log(value)
         self.debug('wrote to user log')
+
+    def log_json(self, value):
+        entry = json.dumps(value, indent=2)
+        self.write_to_file(self.LOG_JSON_FILE, entry)
+        self.debug('wrote to log_json log')
         
     def email_log(self, value):
         entry = 'LOG :: [%s] -- %s\n' % (datetime.datetime.now(), value)
